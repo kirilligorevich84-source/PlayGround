@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+<meta name="theme-color" content="#05070a" />
+<title>NIGHTFALL — The Hunt</title>
+<link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+<div id="app">
+  <canvas id="scene"></canvas>
+
+  <div id="vignette"></div>
+  <canvas id="bloodScreen"></canvas>
+  <div id="letterbox"><div class="bar top"></div><div class="bar bottom"></div></div>
+  <div id="flash"></div>
+
+  <div id="hud" class="hidden">
+    <div id="objective">
+      <div class="hud-label"><span class="dot"></span> CONTRACT</div>
+      <div id="objText">ELIMINATE THE NIGHT WATCH</div>
+      <div id="objSub">0 / 6 GUARDS NEUTRALIZED</div>
+    </div>
+
+    <div id="minimapWrap">
+      <canvas id="minimap" width="176" height="176"></canvas>
+      <div class="mm-corner tl"></div><div class="mm-corner tr"></div>
+      <div class="mm-corner bl"></div><div class="mm-corner br"></div>
+    </div>
+
+    <div id="detect">
+      <div id="eye">
+        <svg viewBox="0 0 64 40" aria-hidden="true">
+          <path d="M2 20 C14 4, 50 4, 62 20 C50 36, 14 36, 2 20 Z" fill="none" stroke="currentColor" stroke-width="2.4"/>
+          <circle cx="32" cy="20" r="8" fill="currentColor"/>
+        </svg>
+      </div>
+      <div id="detectBar"><i></i></div>
+      <div id="detectText">HIDDEN</div>
+    </div>
+
+    <div id="vitals">
+      <div class="hud-label">VITALS</div>
+      <div id="healthBar"><i></i></div>
+      <div id="healthNum">100</div>
+    </div>
+
+    <div id="weaponCard">
+      <div id="knifeIcon">
+        <svg viewBox="0 0 120 40" aria-hidden="true">
+          <path d="M6 26 L62 14 L86 8 L80 15 L38 30 Z" fill="#cfd6dd"/>
+          <path d="M8 27 L38 31 L4 34 Z" fill="#3a4048"/>
+          <rect x="62" y="15" width="34" height="7" rx="3" transform="rotate(-9 62 15)" fill="#20252b"/>
+          <path d="M64 22 L96 16" stroke="#b33" stroke-width="2"/>
+        </svg>
+      </div>
+      <div class="wtext">
+        <div class="wname">CARBON STEEL</div>
+        <div class="wkey">LMB <span>SLASH</span></div>
+      </div>
+    </div>
+
+    <div id="kills"><b>0</b><span>NEUTRALIZED</span></div>
+
+    <div id="prompt" class="hidden">
+      <div class="key">F</div><div class="ptext">EXECUTE</div>
+    </div>
+
+    <div id="subtitle"></div>
+  </div>
+
+  <div id="crosshair" class="hidden"><i></i><i></i><i></i><i></i><b></b></div>
+
+  <div id="titleScreen">
+    <div class="title-bg"></div>
+    <div class="title-content">
+      <div class="eyebrow">A RAIN-SOAKED STEALTH KILLER</div>
+      <h1 class="logo"><span>NIGHTFALL</span></h1>
+      <div class="tagline">THE HUNT</div>
+      <p class="blurb">Six guards. One knife. No witnesses.<br/>Move through the flooded freight yard, take them from the dark, and reach the north gate.</p>
+      <button id="playBtn" aria-label="Play">PLAY</button>
+      <div class="controls">
+        <div><kbd>W A S D</kbd><span>MOVE</span></div>
+        <div><kbd>MOUSE</kbd><span>LOOK</span></div>
+        <div><kbd>SHIFT</kbd><span>SPRINT</span></div>
+        <div><kbd>C</kbd><span>CROUCH</span></div>
+        <div><kbd>LMB</kbd><span>SLASH</span></div>
+        <div><kbd>F</kbd><span>EXECUTE</span></div>
+      </div>
+      <div class="finePrint">Stylized violence · Fictional setting · Headphones recommended</div>
+    </div>
+  </div>
+
+  <div id="deathScreen" class="overlay hidden">
+    <div class="ov-inner">
+      <div class="ov-kicker">THE HUNT ENDS</div>
+      <h2 class="dead">YOU DIED</h2>
+      <p id="deathTip">They heard you coming.</p>
+      <button class="restart" aria-label="Play">PLAY AGAIN</button>
+    </div>
+  </div>
+
+  <div id="winScreen" class="overlay hidden">
+    <div class="ov-inner">
+      <div class="ov-kicker">NO WITNESSES</div>
+      <h2 class="win">EXTRACTION COMPLETE</h2>
+      <div class="stats">
+        <div><b id="statKills">6</b><span>GUARDS</span></div>
+        <div><b id="statTime">00:00</b><span>TIME</span></div>
+        <div><b id="statSilent">S</b><span>RATING</span></div>
+      </div>
+      <p>You slip through the gate and vanish into the rain.</p>
+      <button class="restart" aria-label="Play">PLAY AGAIN</button>
+    </div>
+  </div>
+
+  <div id="pauseScreen" class="overlay hidden">
+    <div class="ov-inner">
+      <div class="ov-kicker">PAUSED</div>
+      <h2>THEY'RE STILL OUT THERE</h2>
+      <button id="resumeBtn">RESUME</button>
+    </div>
+  </div>
+
+  <div id="mobile" class="hidden">
+    <div id="stick"><div id="stickNub"></div></div>
+    <div id="mBtns">
+      <button id="btnCrouch" class="mbtn small">CROUCH</button>
+      <button id="btnSlash" class="mbtn">SLASH</button>
+      <button id="btnExec" class="mbtn exec">EXECUTE</button>
+    </div>
+  </div>
+
+  <div id="loading">
+    <div class="load-inner">
+      <div class="load-logo">NIGHTFALL</div>
+      <div class="load-bar"><i></i></div>
+      <div class="load-text">ENTERING THE YARD</div>
+    </div>
+  </div>
+</div>
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "./vendor/three/three.module.js",
+    "three/addons/": "./vendor/three/addons/"
+  }
+}
+</script>
+<script type="module" src="./js/main.js"></script>
+</body>
+</html>
